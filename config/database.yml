@@ -15,7 +15,7 @@ development:
   reconnect: false
   database: q_auth_development
   pool: 5
-  username: kvarma
+  username: akshay
   host: localhost
   port: 5432
 
@@ -25,7 +25,7 @@ test:
   reconnect: false
   database: q_auth_test_<%= ENV['TEST_ENV_NUMBER'] %>
   pool: 5
-  username: kvarma
+  username: akshay
   host: localhost
   port: 5432
 

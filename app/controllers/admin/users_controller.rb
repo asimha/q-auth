@@ -107,7 +107,6 @@ class Admin::UsersController < Admin::BaseController
 
     ## Validating the data
     @user.valid?
-
     respond_to do |format|
       if @user.errors.blank?
 

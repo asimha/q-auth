@@ -115,7 +115,6 @@ ActiveRecord::Schema.define(version: 20141230100508) do
     t.string   "user_type",                          default: "user"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.datetime "token_expires_at"
     t.datetime "token_created_at"
   end
 
