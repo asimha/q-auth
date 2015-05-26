@@ -1,28 +1,54 @@
 require "rails_helper"
 
-
-
 describe Admin::UsersController, :type => :controller do
-  let(:user) {FactoryGirl.create(:user)}
 
-  it "make admin" do
-    expect(:get => admin_user_make_admin_path(user)).to route_to(:action => 'make_admin', :controller => 'admin/users', :user_id => user.id.to_s)
+  let(:user) {FactoryGirl.create(:active_user)}
+
+  it "index" do
+    expect(:get => admin_users_path).to route_to(:action => 'index', :controller => 'admin/users')
   end
 
-  it "make super admin" do
-    expect(:get => admin_user_make_super_admin_path(user)).to route_to(:action => 'make_super_admin', :controller => 'admin/users', :user_id => user.id.to_s)
+  it "show" do
+    expect(:get => admin_user_path(user)).to route_to(:action => 'show', :controller => 'admin/users', :id => user.id.to_s)
   end
 
-  it "remove admin" do
-    expect(:get => admin_user_remove_admin_path(user)).to route_to(:action => 'remove_admin', :controller => 'admin/users', :user_id => user.id.to_s)
+  it "new" do
+    expect(:get => new_admin_user_path).to route_to(:action => 'new', :controller => 'admin/users')
   end
 
-  it "remove super admin" do
-    expect(:get => admin_user_remove_super_admin_path(user)).to route_to(:action => 'remove_super_admin', :controller => 'admin/users', :user_id => user.id.to_s)
+  it "create" do
+    expect(:post => admin_users_path).to route_to(:action => 'create', :controller => 'admin/users')
   end
 
-  it "update status" do
-    expect(:put => admin_user_update_status_path(user)).to route_to(:action => 'update_status', :controller => 'admin/users', :user_id => user.id.to_s)
+  it "edit" do
+    expect(:get => edit_admin_user_path(user)).to route_to(:action => 'edit', :controller => 'admin/users', :id => user.id.to_s)
   end
 
+  it "update" do
+    expect(:put => admin_user_path(user)).to route_to(:action => 'update', :controller => 'admin/users', :id => user.id.to_s)
+  end
+
+  it "destroy" do
+    expect(:delete => admin_user_path(user)).to route_to(:action => 'destroy', :controller => 'admin/users', :id => user.id.to_s)
+  end
+
+  it "make_admin" do
+    expect(:put => make_admin_admin_user_path(user)).to route_to(:action => 'make_admin', :controller => 'admin/users', :id => user.id.to_s)
+  end
+
+  it "make_super_admin" do
+    expect(:put => make_super_admin_admin_user_path(user)).to route_to(:action => 'make_super_admin', :controller => 'admin/users', :id => user.id.to_s)
+  end
+
+  it "remove_admin" do
+    expect(:put => remove_admin_admin_user_path(user)).to route_to(:action => 'remove_admin', :controller => 'admin/users', :id => user.id.to_s)
+  end
+
+  it "remove_super_admin" do
+    expect(:put => remove_super_admin_admin_user_path(user)).to route_to(:action => 'remove_super_admin', :controller => 'admin/users', :id => user.id.to_s)
+  end
+
+  it "update_status" do
+    expect(:put => update_status_admin_user_path(user)).to route_to(:action => 'update_status', :controller => 'admin/users', :id => user.id.to_s)
+  end
 end

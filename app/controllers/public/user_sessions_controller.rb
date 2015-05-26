@@ -1,73 +1,73 @@
 module Public
   class UserSessionsController < ApplicationController
 
-    before_filter :require_user, :only => :sign_out
-    before_filter :set_navs
+    layout 'poodle/public'
 
-    layout 'sign_in'
+    before_filter :require_user, :only => :sign_out
 
     def sign_in
-      redirect_to_appropriate_page_after_sign_in if @current_user
+      redirect_to_appropriate_page_after_sign_in if @current_user && !@current_user.token_expired?
     end
 
-    ## This method will accept a proc, execute it and render the json
     def create_session
-
-      # Fetching the user data (email / username is case insensitive.)
-      @user = User.where("LOWER(email) = LOWER('#{params['email']}')").first
-
-      # If the user exists with the given username / password
-      if @user
-        # Check if the user is not approved (pending, locked or blocked)
-        # Will allow to login only if status is approved
-        if @user.status != ConfigCenter::User::ACTIVE
-          #puts "#{@user.email} id not activated".yellow
-          set_notification_messages(I18n.t("authentication.user_is_#{@user.status.downcase}_heading"), I18n.t("authentication.user_is_#{@user.status.downcase}_message"), :error)
-          redirect_or_popup_to_default_sign_in_page
-          return
-        # Check if the password matches
-        # Invalid Login: Password / Username doesn't match
-        elsif @user.authenticate(params['password']) == false
-          #puts "#{@user.email} not authenticated".yellow
-          set_notification_messages(I18n.t("authentication.invalid_login_heading"), I18n.t("authentication.invalid_login_message"), :error)
-          redirect_or_popup_to_default_sign_in_page
-          return
-        end
-        #puts "#{@user.email} logged in".yellow
-
-        # If successfully authenticated.
-        set_notification_messages(I18n.t("authentication.logged_in_successfully_heading"), I18n.t("authentication.logged_in_successfully_message"), :success)
-        session[:id] = @user.id
-        @user.start_session
-
-        # Set the current_user
-        @current_user = @user
-
-        redirect_to_appropriate_page_after_sign_in
+      @registration_details = AuthenticationService.new(params)
+      if @registration_details.error
+        set_notification_messages(@registration_details.error, :error)
+        redirect_or_popup_to_default_sign_in_page
         return
-      # If the user with provided email doesn't exist
       else
-        #puts "#{params['email']} not found".yellow
-        set_notification_messages(I18n.t("authentication.invalid_login_heading"), I18n.t("authentication.invalid_login_message"), :error)
-        redirect_after_unsuccessful_authentication
+        @user = @registration_details.user
+        session[:id] = @user.id
+        @current_user = @user
+        set_notification_messages("authentication.logged_in", :success)
+        redirect_to_appropriate_page_after_sign_in
         return
       end
     end
 
     def sign_out
-      set_notification_messages(I18n.t("authentication.logged_out_successfully_heading"), I18n.t("authentication.logged_out_successfully_message"), :success)
-      # Reseting the auth token for user when he logs out.
-      @current_user.update_attributes auth_token: SecureRandom.hex, token_created_at: nil
+      set_notification_messages("authentication.logged_out", :success)
+      @current_user.end_session
       session.delete(:id)
       restore_last_user
       redirect_after_unsuccessful_authentication
     end
 
-    private
-
-    def set_navs
-      set_nav("Login")
+    def forgot_password_form
     end
 
+    def forgot_password
+      @user = User.find_by_email(params[:email])
+      if @user.present?
+        @user.generate_reset_password_token
+        @user.save
+        UsersMailer.forgot_password(@user).deliver
+      else
+      end
+      flash[:notice] = "A password reset link will be send to your email if the records matches."
+      redirect_to root_path
+    end
+
+    def reset_password_form
+      @user = User.find(params[:id])
+    end
+
+    def reset_password_update
+      @user = User.find(params[:id])
+      if @user.reset_password_token == user_params[:reset_password_token] && @user.update(user_params)
+        @user.reset_password_token = nil
+        @user.save
+        flash[:success] = "Password updated successfully"
+        redirect_to root_path
+      else
+       flash[:error] = "Unable to update password please try again later"
+       render "reset_password_form"
+     end
+   end
+
+   def user_params
+    params[:user].permit(:password, :password_confirmation, :reset_password_token)
   end
+
+end
 end

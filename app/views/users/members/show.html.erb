@@ -1,0 +1,10 @@
+<div class="row mb-10">
+<div class="fs-22 col-sm-6 hidden-xs"><i class='fa fa-user fa-lg mr-10'></i><u><%=@user.name%></u></div>
+  <span class="pull-right fs-18">
+    <%= link_to "", users_members_path,:class=>'fa fa-arrow-left fa-lg mr-10'%>
+  </span>
+</div>
+<div class="panel-body clearfix">
+  <%= render partial: "show" %>
+</div>
+</div>

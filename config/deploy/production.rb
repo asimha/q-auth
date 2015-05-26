@@ -3,15 +3,16 @@
 
 set :stage, :production
 set :branch, :master
-set :deploy_to, '/u01/apps/qwinix/qauth'
+set :deploy_to, '/apps/q-auth'
 set :log_level, :debug
+
 # Supports bulk-adding hosts to roles, the primary server in each group
 # is considered to be the first unless any hosts have the primary
 # property set.  Don't declare `role :all`, it's a meta role.
 
-role :app, %w{deploy@54.69.36.26}
-role :web, %w{deploy@54.69.36.26}
-role :db,  %w{deploy@54.69.36.26}
+role :app, %w{deploy@52.10.57.220}
+role :web, %w{deploy@52.10.57.220}
+role :db,  %w{deploy@52.10.57.220}
 
 
 # Extended Server Syntax
@@ -20,7 +21,7 @@ role :db,  %w{deploy@54.69.36.26}
 # server list. The second argument is a, or duck-types, Hash and is
 # used to set extended properties on the server.
 
-server '54.69.36.26', user: 'deploy', roles: %w{web app}, my_property: :my_value
+server '52.10.57.220', user: 'deploy', roles: %w{web app}, my_property: :my_value
 
 
 # Custom SSH Options

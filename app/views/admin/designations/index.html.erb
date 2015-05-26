@@ -1,16 +1,13 @@
+<%= theme_heading("Manage Designations") %>
 
-<div class="cl-10 hidden-xs"></div>
-
-<%# Displays to Manage the items %>
 <div class="row mb-10">
-	<div class="fs-22 col-sm-6 hidden-xs"><i class='fa fa-user-md fa-lg mr-10'></i>Manage Designations</div>
-	<div class="fs-22 col-sm-6 text-align-center visible-xs"><i class='fa fa-building fa-lg mr-10'></i>Manage Designations</div>
-	<div id="div_client_filters" class="col-sm-6 hidden-xs">
-		<%= render :partial=>"filters" %>
+	<div class="col-sm-6">
+		<%= theme_button('New Designation', 'plus', new_admin_designation_path) %>
 	</div>
+	<div class="col-sm-6">
+		<%= theme_search_form(Designation, admin_designations_path) %>
+  </div>
 </div>
-
-<div class="cl-10 hidden-xs"></div>
 
 <%# Renders a partial to display all the designations %>
 <div class="row">
@@ -18,22 +15,11 @@
 		<%= render :partial=>"index" %>
 	</div>
 	<div id="div_designation_drop_down" class="col-xs-12 visible-xs">
-		<%= render :partial=>"drop_down" %>
+		<%= theme_drop_down(@designations, :title) %>
 	</div>
 
 	<div id="div_designation_details" class="col-xs-12 col-sm-6">
-		<% case	params[:action] %>
-		<% when "new", "edit", "show" %>
-			<%= render :partial=>params[:action] %>
-		<% when "index" %>
-			<% if @designations.empty? %>
-				<%= render :partial=>"summary" %>
-			<% else %>
-				<%= render :partial=>"show" %>
-			<% end %>
-		<% else %>
-			<%= render :partial=>"summary" %>
-		<% end %>
+		<%= theme_detail_box(@designations) %>
 	</div>
 
 </div>

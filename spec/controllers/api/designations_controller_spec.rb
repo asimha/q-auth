@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::DesignationsController, :type => :controller do
-  include ParamsParserHelper
+  #include ParamsParserHelper
   let(:designation){FactoryGirl.create(:designation)}
   let(:designation_one){FactoryGirl.create(:designation)}
   let(:designation_two){FactoryGirl.create(:designation)}

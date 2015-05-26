@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    <title><%= title -%></title>
+    <%= meta_tags %>
+    <link rel="icon" href="/assets/favicon.ico" type="image/png">
+
+    <%= stylesheet_link_tag @stylesheet_filename, :media => "all" -%>
+    <%= csrf_meta_tags -%>
+    <%= yield :javascript_header -%>
+  </head>
+<body>
+
+  <div>
+
+    <div class="container-fluid header-block clearfix">
+
+      <div id="div_page_header">
+        <%= render :partial=>"/layouts/poodle/public/header" -%>
+      </div>
+
+      <%#* Show flash messages if controller has set any. -%>
+      <div id="div_flash_message" class="mt-30">
+        <%= flash_message(false) if defined?(flash) -%>
+      </div>
+
+      <%#* Page Content Starts here -%>
+      <div id="div_page_content_main">
+        <%= yield %>
+      </div>
+
+      <%#* Display Footer -%>
+      <div id="div_page_footer" class="row footer">
+        <%= render :partial=>"/layouts/poodle/public/footer" -%>
+      </div>
+
+    </div>
+
+  </div>
+
+  <%#* Display Hidden Overlays -%>
+  <%= render :partial=>"/layouts/poodle/common/overlays" -%>
+
+  <%#* Loading Javascripts -%>
+  <%= javascript_include_tag @javascript_filename -%>
+
+  <%= yield :javascript_footer -%>
+
+</body>
+
+</html>

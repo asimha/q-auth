@@ -4,12 +4,12 @@ module AuthenticationHelper
 
   # Returns the default URL to which the system should redirect the user after successful authentication
   def default_redirect_url_after_sign_in
-    user_dashboard_url
+    users_dashboard_url
   end
 
   # Returns the default URL to which the system should redirect the user after an unsuccessful attempt to authorise a resource/page
   def default_sign_in_url
-    user_sign_in_url
+    sign_in_url
   end
 
   # Method to handle the redirection after unsuccesful authentication
@@ -39,7 +39,6 @@ module AuthenticationHelper
       format.html {
         redirect_after_unsuccessful_authentication
       }
-      format.json { render json: {heading: @heading, alert: @alert} }
       format.js {
         render(:partial => 'public/user_sessions/popup_sign_in_form.js.erb', :handlers => [:erb], :formats => [:js])
       }
@@ -61,12 +60,12 @@ module AuthenticationHelper
       if @current_user.token_expired?
         @current_user = nil
         session.delete(:id)
-        set_notification_messages(I18n.t("authentication.session_expired_heading"), I18n.t("authentication.session_expired_message"), :error)
+        set_notification_messages("authentication.session_expired", :error)
         redirect_or_popup_to_default_sign_in_page
         return
       end
     else
-      set_notification_messages(I18n.t("authentication.permission_denied_heading"), I18n.t("authentication.permission_denied_message"), :error)
+      set_notification_messages("authentication.permission_denied", :error)
       redirect_or_popup_to_default_sign_in_page
       return
     end
@@ -75,7 +74,7 @@ module AuthenticationHelper
   # This method is usually used as a before filter from admin controllers to ensure that the logged in user is an admin
   def require_admin
     unless @current_user.is_admin?
-      set_notification_messages(I18n.t("authentication.permission_denied_heading"), I18n.t("authentication.permission_denied_message"), :error)
+      set_notification_messages("authentication.permission_denied", :error)
       redirect_or_popup_to_default_sign_in_page
       return
     end
@@ -84,7 +83,7 @@ module AuthenticationHelper
   # This method is usually used as a before filter from admin controllers to ensure that the logged in user is a super admin
   def require_super_admin
     unless @current_user.is_super_admin?
-      set_notification_messages(I18n.t("authentication.permission_denied_heading"), I18n.t("authentication.permission_denied_message"), :error)
+      set_notification_messages("authentication.permission_denied", :error)
       redirect_or_popup_to_default_sign_in_page
     end
   end
@@ -95,9 +94,22 @@ module AuthenticationHelper
     return @last_user if @last_user
     if session[:last_user_id].present?
       @last_user = User.find_by_id(session[:last_user_id])
+      message = translate("users.sign_in_back", user: @last_user.name)
+      set_flash_message(message, :success, false)
       session.destroy()
       session[:id] = @last_user.id if @last_user.present?
       return @last_user
+    end
+  end
+
+  def masquerade_as_user(user)
+    if ["development", "it", "test"].include?(Rails.env)
+      message = translate("users.masquerade", user: user.name)
+      set_flash_message(message, :success, false)
+      session[:last_user_id] = current_user.id if current_user
+      user.start_session
+      session[:id] = user.id
+      redirect_to users_dashboard_path
     end
   end
 

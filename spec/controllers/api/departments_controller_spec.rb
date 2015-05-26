@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Api::V1::DepartmentsController, :type => :controller do
-  include ParamsParserHelper
+  #include ParamsParserHelper
   let(:department){FactoryGirl.create(:department)}
   let(:department_one){FactoryGirl.create(:department)}
   let(:department_two){FactoryGirl.create(:department)}

@@ -1,25 +1,18 @@
 <% if @designation.errors.blank? %>
-	
-	// Fill the right box with first designation details
-	$('#div_designation_details').html("<%= escape_javascript(render(:partial=>'show')) %>");
-	
-	// Add the newly created item to the list
-  $("#div_designation_collections").prepend("<div id=\"div_designation_<%= @designation.id %>\"><%= escape_javascript(render(:partial => 'item', :locals => { :designation => @designation })) %></div>")
-  $("#div_designation_empty").hide();
-  
-  // Close Modal
-  closeModal();
+  // Fill the right box with first designation details
+  $('#div_designation_details').html("<%= escape_javascript(render(:partial=>'show')) %>");
 
+  // Add the newly created item to the list
+  $("#div_designation_index").prepend("<div id=\"div_designation_<%= @designation.id %>\"><%= escape_javascript(render(:partial => 'item', :locals => { :designation => @designation })) %></div>")
+  $(".panel-message").hide();
 <% else %>
-	
-  // Show the new form in the pop up form.
-  heading = "Create Designation";
-  bodyContent = "<%= escape_javascript(render(:partial=>"form")) %>";
-  showModal(heading, bodyContent);
-  validateDesignationForm();
-  
+  $('#div_designation_details').html("<%= escape_javascript(render(:partial=>'form')) %>");
+  // validateDesignationForm();
+
   // Populate Server Side Errors
-  errorMessages = <%= @designation.errors.full_messages.to_json.html_safe %>;
-  populateServerSideErrors('designation', errorMessages);
-	
+  <%
+    text = "You have few errors. They have been highlighted."
+    error_message = content_tag(:div, text, class: "alert alert-danger")
+  %>
+  $("#designation_form_error").html("<%= escape_javascript(error_message) %>");
 <% end %>

@@ -23,6 +23,8 @@ module QAuth
     config.middleware.use ActionDispatch::Flash
     config.api_only = false
 
+    config.autoload_paths << "#{Rails.root}/app/services"
+
     # Auto load files after rails initialization
     config.after_initialize do
       dirs = [File.join(config.root, "lib", "core_ext", "**", "*.rb")]

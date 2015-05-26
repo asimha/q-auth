@@ -1,169 +1,36 @@
-<%# Displays a detailed view of the user %>
+<%= flash_message if request.xhr? -%>
 
-<%# Display Flash Message if any only in case of ajax request %>
-<% if request.xhr? %>
-<%= render :partial=>"layouts/common/flash_message" %>
-<% end %>
-
-<%
-edit_link = edit_admin_user_path(@user)
-delete_link = admin_user_path(@user)
-%>
-
-<div class="panel panel-profile">
+<div class="panel panel-default">
   <div class="panel-body" style="height:auto;">
-    <div class="basic-profile clearfix" style="height:auto;padding:10px;">
-
-      <div class="row">
-        <div class="col-sm-5">
-          <%= display_profile_picture(@user, 180, 180) %>
-          <div class="text-center" style="width:180px;">
-            <%= link_to "Change Picture", upload_image_link(@user, delete_link, :profile_picture), :remote => true  %>
-          </div>
-        </div>
-
-        <div class="col-sm-7">
-          <div class="mb-20 text-color-gray">
-
-            <div class="fs-22 text-color-blue pull-left">
-              <%= link_to @user.display_name, profile_path(username: @user.username) %>
-            </div>
-
-            <% if @user.is_admin? %>
-            <span class="pull-left ml-20 mt-5 label label-<%= @user.is_super_admin? ? "danger" : "warning" %>">
-              <%= @user.is_super_admin? ? "Super Admin" : "Admin" %>
-            </span>
-            <% end %>
-            <div class="cl"></div>
-
-            <div class="fs-14 text-color-gray"><%= @user.display_designation %></div>
-
-            <% location = @user.display_address %>
-            <% unless location.blank? %>
-            <div class="text-color-green fs-14"><i class="fa fa-map-marker"></i> <%= location %> </div>
-            <% end %>
-          </div>
-          <div class="">
-            <div class="fs-14 p-5">
-              <div class="email"><i class="fa fa-envelope mr-20"> </i> <%= @user.email ? @user.email : "<not set>" %></div>
-            </div>
-            <div class="fs-14 p-5">
-              <div class="phone"><i class="fa fa-phone mr-20"> </i> <%= @user.phone ? @user.phone : "<not set>" %></div>
-            </div>
-            <div class="fs-14 p-5">
-              <div class="skype"><i class="fa fa-skype mr-20"> </i> <%= @user.skype ? @user.skype : "<not set>" %></div>
-            </div>
-            <div class="fs-14 p-5">
-              <div class="linkedin"><i class="fa fa-linkedin mr-20"> </i> <%= @user.linkedin ? @user.linkedin : "<not set>" %></div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
+    <div class="pull-left" style="width:30%;">
+      <%= edit_image(@user, "profile_picture.image.large.url", upload_image_link(@user, :profile_picture)) %>
     </div>
-  </div>
+    <div class="pull-left ml-10" style="width:65%;">
+      <%= theme_panel_heading(@user.name) %>
+      <%= theme_panel_sub_heading(@user.display_designation, "#") %>
 
-  <div class="panel-footer">
-
-    <% if @current_user.is_admin? && ["development", "it", "test"].include?(Rails.env) %>
-    <%= link_to raw("<i class=\"fa fa-plug mr-5\"></i> Masquerade"), admin_user_masquerade_path(@user),
-    class: "btn btn-default btn-xs mt-10",
-      data: { confirm: "Are you sure? Do you really want to logout current session and login as #{@user.name}?" } %>
+      <%= clear_tag %>
+      <% if @user.is_admin? %>
+        <span class="mr-10 mt-5 label label-<%= @user.is_super_admin? ? "danger" : "warning" %>">
+          <%= @user.is_super_admin? ? "Super Admin" : "Admin" %>
+        </span>
       <% end %>
-      <div class="dropdown pull-right m-10">
-        <button class="btn btn-default btn-xs dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" style="color:inherit;">
-          <%= raw("<i class=\"fa fa-cogs mr-5\"></i> Action") %>
-          <span class="caret"></span>
-        </button>
+      <%
+        status_hash = {active: "primary", inactive: "default", suspended: "danger"}
+      %>
+      <span class="mt-5 label label-<%= status_hash[@user.status.to_sym] %>">
+        <%= @user.status.titleize %> Account
+      </span>
+      <%= clear_tag %>
 
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
-
-          <% case @user.user_type %>
-          <% when "user", nil %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-plus mr-5\"></i> Make Admin"), admin_user_make_admin_path(user_id: @user.id), :remote=>true, role: "menuitem", tabindex: "-1" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-
-          <% if @current_user.is_super_admin? %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-plus-square mr-5\"></i> Make Super Admin"), admin_user_make_super_admin_path(user_id: @user.id), :remote=>true, role: "menuitem", tabindex: "-1" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <% end %>
-
-          <% when "admin" %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-remove mr-5\"></i> Remove Admin"), admin_user_remove_admin_path(user_id: @user.id), :remote=>true, role: "menuitem", tabindex: "-1" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-
-          <% if @current_user.is_super_admin? %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-plus-square mr-5\"></i> Make Super Admin"), admin_user_make_super_admin_path(user_id: @user.id), :remote=>true, role: "menuitem", tabindex: "-1" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <% end %>
-
-          <% when "super_admin" %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-plus mr-5\"></i> Make Admin"), admin_user_make_admin_path(user_id: @user.id), :remote=>true, role: "menuitem", tabindex: "-1" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-remove mr-5\"></i> Remove Super Admin"), admin_user_remove_super_admin_path(user_id: @user.id), :remote=>true, role: "menuitem", tabindex: "-1" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <% end %>
-
-
-          <% case @user.status %>
-          <% when "active" %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-circle mr-5\"></i> Inactivate"), admin_user_update_status_path(:user_id =>@user.id, :status =>'inactive'), :method =>'PUT', :remote=>true, role: "menuitem", tabindex: "-1", :class=>"user_status" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-edit mr-5\"></i> Suspend"), admin_user_update_status_path(:user_id =>@user.id, :status =>'suspended'), :method =>'PUT', :remote=>true, role: "menuitem", tabindex: "-1", :class=>"user_status" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <% when "inactive" %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-circle-o mr-5\"></i> Activate"), admin_user_update_status_path(:user_id =>@user.id, :status =>'active'), :method =>'PUT', :remote=>true, role: "menuitem", tabindex: "-1", :class=>"user_status" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <% when "suspended" %>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-circle-o mr-5\"></i> Activate"), admin_user_update_status_path(:user_id =>@user.id, :status =>'active'), :method =>'PUT', :remote=>true, role: "menuitem", tabindex: "-1",:class=>"user_status" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <% end %>
-
-
-
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-edit mr-5\"></i> Edit"), edit_link, :remote=>true, role: "menuitem", tabindex: "-1" %>
-          </li>
-          <li role="presentation" class="divider"></li>
-          <li role="presentation">
-            <%= link_to raw("<i class=\"fa fa-trash mr-5\"></i> Delete"), delete_link, method: :delete, role: "menuitem", tabindex: "-1", data: { confirm: 'Are you sure?' }, :remote=>true %>
-          </li>
-        </ul>
-      </div>
-      <div class="clearfix"></div>
+      <%= theme_panel_description(@user.display_address, "fs-14 mt-10 text-color-gray") %>
     </div>
+    <%= clear_tag %>
+
+    <%= theme_panel_description(@user.biography, "fs-14 mt-10 text-color-gray") if @user.biography %>
+
   </div>
 
-  <div id="div_user_projects">
-    <%#= render :partial => "admin/users/projects/index", :locals=>{:user => @user} %>
-  </div>
+  <%= render partial: "action_buttons" %>
 
-  <% if @current_user.is_super_admin? %>
-  <%= render :partial => "widgets/more_details", :locals=>{
-    :data_model => @user,
-    :data_columns => [:id, :created_at, :updated_at, :locked_at, :failed_attempts, :unconfirmed_email, :confirmation_sent_at, :confirmed_at, :last_sign_in_ip, :current_sign_in_ip, :last_sign_in_at, :current_sign_in_at, :sign_in_count, :remember_created_at],
-    :heading => "Technical Details",
-    :display_footer => false} %>
-    <% end %>
+</div>

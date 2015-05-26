@@ -15,5 +15,4 @@ describe Api::V1::MembersController, :type => :controller do
       :id => "1"
     )
   end
-
 end

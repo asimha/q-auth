@@ -1,0 +1,60 @@
+<%= image_tag("/assets/q-auth-white-280px.png", class: "centered mt-20", alt: "Q-Auth Logo", width: "180px") %>
+<div class="cl-30"></div>
+
+<ul>
+
+  <li class="<%= nav_class("user/dashboard") %>">
+    <%= link_to raw("<i class=\"fa fa-dashboard\"></i> Dashboard"), main_app.users_dashboard_url %>
+  </li>
+
+  <li class="heading">Team</li>
+
+  <li class="<%= nav_class("users/members") %>">
+    <%= link_to raw("<i class=\"fa fa-rub\"></i> Members"), main_app.users_members_path %>
+  </li>
+
+  <% if @current_user.is_admin? %>
+
+    <li class="heading">Admin</li>
+
+    <li class="<%= nav_class("admin/users") %>">
+      <%= link_to raw("<i class=\"fa fa-group\"></i> Manage Users"), main_app.admin_users_path %>
+    </li>
+
+  <% end %>
+
+  <% if @current_user.is_super_admin? %>
+
+    <li class="heading">Configuration</li>
+
+    <li class="<%= nav_class("admin/departments") %>">
+      <%= link_to raw("<i class=\"fa fa-building\"></i> Manage Departments"), admin_departments_path %>
+    </li>
+
+    <li class="<%= nav_class("admin/designations") %>">
+      <%= link_to raw("<i class=\"fa fa-user-md\"></i> Manage Designations"), admin_designations_path %>
+    </li>
+
+  <% end %>
+
+  <li class="heading">Account</li>
+
+  <li class="<%= nav_class("user/profile") %>">
+    <%= link_to raw("<i class=\"fa fa-user\"></i> My Profile"), users_profile_path %>
+  </li>
+
+  <li>
+    <%= link_to raw("<i class=\"fa fa-power-off\"></i> Sign Out"), sign_out_path, :method => :delete %>
+  </li>
+
+  <% if @current_user.is_super_admin? %>
+
+    <li class="heading">API</li>
+    <li class="<%= nav_class("admin/api_doc") %>">
+      <%= link_to raw("<i class=\"fa fa-anchor\"></i> API Documentation"), admin_api_doc_path %>
+    </li>
+
+  <% end %>
+
+</ul>
+

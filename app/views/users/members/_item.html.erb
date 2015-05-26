@@ -1,0 +1,7 @@
+<% user_color = user.user_type.blank? ? "info" : (user.is_super_admin? ? "danger" : "warning") %>
+
+<%= display_user_image(user, "profile_picture.image.thumb.url", width: "160px", popover: user.display_designation) %>
+<%= theme_item_title(user.display_name, users_member_path(user)) %>
+<%= clear_tag(20) %>
+
+

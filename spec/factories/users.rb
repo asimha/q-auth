@@ -32,7 +32,6 @@ FactoryGirl.define do
     department
 
     biography "A programmer by profession. A student of history and music by passion. Uses Ruby, Python and Javascript. Work as an Web Architect for Qwinix"
-
   end
 
   factory :inactive_user, parent: :normal_user do
@@ -43,11 +42,12 @@ FactoryGirl.define do
     status "active"
   end
 
-  factory :suspend_user, parent: :normal_user do
+  factory :suspended_user, parent: :normal_user do
     status "suspended"
   end
 
   factory :admin_user, parent: :user do
+    status "active"
     user_type "admin"
   end
 

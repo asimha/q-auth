@@ -15,5 +15,4 @@ describe Api::V1::DesignationsController, :type => :controller do
       :id=> ":id"
     )
   end
-
 end

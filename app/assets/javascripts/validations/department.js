@@ -1,5 +1,5 @@
 function validateDepartmentForm() {
-  
+
     $('#form_department').validate({
       debug: true,
       rules: {
@@ -12,8 +12,8 @@ function validateDepartmentForm() {
       errorElement: "span",
       errorClass: "help-block",
       messages: {
-        "department[name]": "Please specify Name",
-        "department[description]": "Please specify Description",
+        "department[name]": "can't be blank",
+        "department[description]": "can't be blank",
       },
       highlight: function(element) {
           $(element).parent().parent().addClass("has-error");
@@ -25,30 +25,28 @@ function validateDepartmentForm() {
         // 'this' refers to the form
         var errors = validator.numberOfInvalids();
         if (errors) {
-          
+
           // Populating error message
           var errorMessage = errors == 1
             ? 'You missed 1 field. It has been highlighted'
             : 'You missed ' + errors + ' fields. They have been highlighted';
-          
+
           // Removing the form error if it already exists
-          $("#div_department_js_validation_error").remove();
-          
-          errorHtml = "<div id='div_department_js_validation_error' class=\"alert alert-danger\" data-alert=\"alert\" style=\"margin-bottom:5px;\">"+ errorMessage +"</div>"
-          //$("#div_department_details").prepend(errorHtml);  
-          $("#div_modal_generic div.modal-body-main").prepend(errorHtml);  
-          
+          var errorHtml = "<div class=\"alert alert-danger\" data-alert=\"alert\" style=\"margin-bottom:5px;\">"+ errorMessage +"</div>"
+          $("#department_form_error").html(errorHtml);
+
           // Show error labels
           $("div.error").show();
-          
+
         } else {
           // Hide error labels
           $("div.error").hide();
+
           // Removing the error message
-          $("#div_department_js_validation_error").remove();
+          $("#department_form_error").remove();
         }
       }
-      
+
     });
-    
+
 }

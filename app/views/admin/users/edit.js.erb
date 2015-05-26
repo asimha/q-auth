@@ -1,5 +1,2 @@
-// Show the edit form in the right box.
-heading = "Edit User";
-bodyContent = "<%= escape_javascript(render(:partial=>"form")) %>";
-showModal(heading, bodyContent);
+$('#div_user_show').html("<%= escape_javascript(render(:partial=>'form')) %>");
 validateUserForm();

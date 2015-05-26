@@ -19,7 +19,7 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
                                             linkedin: "mohandas_linkedin",
                                             biography: "Father of the nation, India") }
   describe "create" do
-    describe "Positive Case" do
+    context "Positive Case" do
       it "should return the user information with the for a valid auth token" do
         active_user
         #request.env['HTTP_AUTHORIZATION'] = token
@@ -30,7 +30,7 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
 
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(true)
-        expect(response_body["alert"]).to  eq("You have successfully signed in")
+        expect(response_body["alert"]).to  eq("Signed In: You have successfully signed in")
         expect(response_body["data"]["name"]).to  eq("Mohandas Gandhi")
         expect(response_body["data"]["username"]).to  eq("mohandas")
         expect(response_body["data"]["email"]).to  eq("mohandas@gandhi.com")
@@ -50,7 +50,8 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
         expect(response_body["data"]["password_digest"]).to  eq(nil)
       end
     end
-    describe "Negative Case" do
+
+    context "Negative Case" do
       it "should return error for invalid username" do
         active_user
         credentials = {login_handle: active_user.username, password: "wrong password"}
@@ -58,9 +59,9 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
         post "create", credentials, :format =>:json
         response_body = JSON.parse(response.body)
 
-        expect(response.status).to  eq(200)
-        expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("Invalid username/email or password.")
+        expect(response.status).to eq(200)
+        expect(response_body["success"]).to eq(false)
+        expect(response_body["alert"]).to  eq("Invalid Login: Invalid Username/Email or password.")
         expect(response_body["data"]["errors"]["name"]).to  eq("InvalidLoginError")
         expect(response_body["data"]["errors"]["description"]).to  eq("Invalid username/email or password.")
       end
@@ -73,7 +74,7 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
 
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("Invalid username/email or password.")
+        expect(response_body["alert"]).to  eq("Invalid Login: Invalid Username/Email or password.")
         expect(response_body["data"]["errors"]["name"]).to  eq("InvalidLoginError")
         expect(response_body["data"]["errors"]["description"]).to  eq("Invalid username/email or password.")
       end
@@ -81,7 +82,7 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
   end
 
   describe "destroy" do
-    describe "Positive Case" do
+    context "Positive Case" do
       it "should change the auth token on valid sign out request" do
         active_user
         old_auth_token = active_user.auth_token
@@ -92,7 +93,7 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
 
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(true)
-        expect(response_body["alert"]).to  eq("You have successfully signed out")
+        expect(response_body["alert"]).to  eq("Signed Out: You have successfully signed out")
 
         # Checking if the Auth Token has changed
         active_user.reload
@@ -104,12 +105,12 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
 
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(true)
-        expect(response_body["alert"]).to  eq("You have successfully signed in")
+        expect(response_body["alert"]).to  eq("Signed Out: You have successfully signed out")
         expect(response_body["data"]["name"]).to  eq("Mohandas Gandhi")
         expect(response_body["data"]["auth_token"]).not_to  eq(old_auth_token)
       end
     end
-    describe "Negative Case" do
+    context "Negative Case" do
       it "should not change the auth token and should render error for invalid request" do
         active_user
         old_auth_token = active_user.auth_token
@@ -119,22 +120,9 @@ RSpec.describe Api::V1::AuthenticationsController, :type => :controller do
 
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
-
-        # Checking if the Auth Token has changed
-        active_user.reload
-        credentials = {login_handle: active_user.username, password: ConfigCenter::Defaults::PASSWORD}
-
-        post "create", credentials, :format =>:json
-        response_body = JSON.parse(response.body)
-
-        expect(response.status).to  eq(200)
-        expect(response_body["success"]).to  eq(true)
-        expect(response_body["alert"]).to  eq("You have successfully signed in")
-        expect(response_body["data"]["name"]).to  eq("Mohandas Gandhi")
-        expect(response_body["data"]["auth_token"]).to  eq(old_auth_token)
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
     end
   end

@@ -8,3 +8,16 @@ More Info to be put here
 * q-auth-api uses warden for authentication. (This might change in future)
 * Uses a Global Configuration for named ConfigCenter
 
+##### Deployment
+
+Login to clound founry console
+`cf login -s QwinixLabs`
+It will ask for username and password.
+
+API endpoint:   https://api.run.pivotal.io
+User:           <your email> (You need to be a developer / manager of the Space in order to deploy)
+Org:            Qwinix Technologies
+Space:          QwinixLabs
+
+
+

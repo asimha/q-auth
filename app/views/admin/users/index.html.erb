@@ -1,16 +1,13 @@
+<%= theme_heading("Manage Users") %>
 
-<div class="cl-10 hidden-xs"></div>
-
-<%# Displays to Manage the items %>
 <div class="row mb-10">
-	<div class="fs-22 col-sm-6 hidden-xs"><i class='fa fa-user fa-lg mr-10'></i>Manage Users</div>
-	<div class="fs-22 col-sm-6 text-align-center visible-xs"><i class='fa fa-user fa-lg mr-10'></i>Manage Users</div>
-	<div id="div_user_filters" class="col-sm-6 hidden-xs">
-		<%= render :partial=>"filters" %>
+	<div class="col-sm-6">
+		<%= theme_button('New User', 'plus', new_admin_user_path) %>
 	</div>
+	<div class="col-sm-6">
+		<%= theme_search_form(User, admin_users_path) %>
+  </div>
 </div>
-
-<div class="cl-10 hidden-xs"></div>
 
 <%# Renders a partial to display all the users %>
 <div class="row">
@@ -18,22 +15,16 @@
 		<%= render :partial=>"index" %>
 	</div>
 	<div id="div_user_drop_down" class="col-xs-12 visible-xs">
-		<%= render :partial=>"drop_down" %>
+		<%= theme_drop_down(@users, :name) %>
 	</div>
 
-	<div id="div_user_details" class="col-xs-12 col-sm-6">
-		<% case	params[:action] %>
-		<% when "new", "edit", "show" %>
-			<%= render :partial=>params[:action] %>
-		<% when "index" %>
-			<% if @users.empty? %>
-				<%= render :partial=>"summary" %>
-			<% else %>
-				<%= render :partial=>"show" %>
-			<% end %>
-		<% else %>
-			<%= render :partial=>"summary" %>
-		<% end %>
+	<div class="col-xs-12 col-sm-6">
+		<div id="div_user_show">
+			<%= theme_detail_box(@users) %>
+		</div>
+		<div id="div_user_details">
+			<%= render :partial=>"details" if @users.any? %>
+		</div>
 	</div>
 
 </div>

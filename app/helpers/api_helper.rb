@@ -1,7 +1,5 @@
 module ApiHelper
 
-  private
-
   def current_user
     # Return if @current_user is already initialized else check if the user exists with the auth token present in request header
     @current_user ||= authenticate_with_http_token { |token, options| User.find_by(auth_token: token)}
@@ -11,7 +9,7 @@ module ApiHelper
     current_user
     unless @current_user
       proc_code = Proc.new do
-        set_notification_messages(I18n.t("response.error"), I18n.t("response.authentication_error"), :error)
+        set_notification_messages("authentication.permission_denied", :error)
         raise AuthenticationError
       end
       render_json_response(proc_code)
@@ -23,7 +21,7 @@ module ApiHelper
     current_user
     unless @current_user && @current_user.is_super_admin?
       proc_code = Proc.new do
-        set_notification_messages(I18n.t("response.error"), I18n.t("response.authentication_error"), :error)
+        set_notification_messages("authentication.permission_denied", :error)
         raise AuthenticationError
       end
       render_json_response(proc_code)
@@ -35,7 +33,7 @@ module ApiHelper
     current_user
     unless @current_user && @current_user.is_admin?
       proc_code = Proc.new do
-        set_notification_messages(I18n.t("response.error"), I18n.t("response.authentication_error"), :error)
+        set_notification_messages("authentication.permission_denied", :error)
         raise AuthenticationError
       end
       render_json_response(proc_code)
@@ -54,11 +52,9 @@ module ApiHelper
       proc_code.call
       @status ||= 200
       @success = @success == false ? (false) : (true)
-
     rescue ValidationError, InvalidLoginError, FailedToCreateError, FailedToUpdateError, FailedToDeleteError, AuthenticationError => e
       @status = 200
       @success = false
-
       @data = {
                 errors: {
                   name:  e.message,
@@ -67,9 +63,7 @@ module ApiHelper
               }
       @data[:errors][:details] = @errors unless @errors.blank?
       @data[:errors][:stack] = e.backtrace if embed_stack_in_json_response?
-
     rescue Exception => e
-
       @data = {
                 errors: {
                   name:  e.message,
@@ -78,7 +72,6 @@ module ApiHelper
                 }
               }
       @data[:errors][:stack] = e.backtrace if embed_stack_in_json_response?
-
     end
 
     response_hash = {success: @success}
@@ -90,7 +83,5 @@ module ApiHelper
 
     render status: @status, json: response_hash
     return
-
   end
-
 end

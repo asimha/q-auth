@@ -1,11 +1,9 @@
 module Api
   module V1
     class DesignationsController < Api::V1::BaseController
-      include ParamsParserHelper
 
       skip_before_filter :require_auth_token
       before_filter :parse_pagination_params, only: :index
-
 
       def show
         proc_code = Proc.new do
@@ -27,7 +25,6 @@ module Api
         end
         render_json_response(proc_code)
       end
-
     end
   end
 end

@@ -1,13 +1,8 @@
-<%# describes about each department %>
-<div class="web-stats info clearfix" style="margin-bottom:5px;padding:5px;height:auto;">
-
-    <div class="visible-md visible-lg pull-left mr-10" style="width:15%;">
-      <%= display_image(department, :picture, "50px") %>
-    </div>
-    <div class="pull-left" style="width:80%;">
-      <%= link_to department.name, admin_department_path(department), :remote=>true, :class=>"text-color-blue fs-14" %>
-      <div class="text-color-gray fs-12"> <%= scrap_word(department.description, 120) %></div>
-    </div>
+<div class="panel panel-default media p-5">
+  <div class="media-body pl-10">
+    <%= theme_item_title(department.name, admin_department_path(department)) %>
+    <%= theme_item_description(department.description, 120) %>
+  </div>
 
 </div>
 

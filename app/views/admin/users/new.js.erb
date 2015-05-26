@@ -1,5 +1,3 @@
-// Show the new form in the pop up form.
-heading = "Create User";
-bodyContent = "<%= escape_javascript(render(:partial=>"form")) %>";
-showModal(heading, bodyContent);
+$('#div_user_show').html("<%= escape_javascript(render(:partial=>'form')) %>");
+$('#div_user_details').html("");
 validateUserForm();

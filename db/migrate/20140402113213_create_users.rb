@@ -3,9 +3,9 @@ class CreateUsers < ActiveRecord::Migration
     create_table(:users) do |t|
 
       ## First Name, Last Name and Username
-      t.string :name, limit: 255
+      t.string :name, limit: 256
       t.string :username, :null => false, :limit=>32
-      t.string :email, :null => false
+      t.string :email, :null => false, limit: 256
 
       t.text :biography
 
@@ -53,9 +53,9 @@ class CreateUsers < ActiveRecord::Migration
       t.datetime :locked_at
 
       ## Token authenticatable
-      t.string :auth_token
+      t.string :auth_token, limit: 512
 
-      t.string :user_type
+      t.string :user_type, limit: 32
 
       t.timestamps
     end

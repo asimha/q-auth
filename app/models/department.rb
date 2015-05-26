@@ -1,11 +1,12 @@
 class Department < ActiveRecord::Base
 
   # Validations
-  validates :name, presence: true
+  extend PoodleValidators
+  validate_string :name, mandatory: true
+  validate_string :description, max_length: 2056
 
   # Associations
   has_many :users
-  has_one :picture, :as => :imageable, :dependent => :destroy, :class_name => "Image::DepartmentPicture"
 
   # return an active record relation object with the search query in its where clause
   # Return the ActiveRecord::Relation object

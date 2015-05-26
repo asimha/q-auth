@@ -1,14 +1,13 @@
 class Image::Base < ActiveRecord::Base
 
   self.table_name = "images"
+  mount_uploader :image, ImageUploader
+  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h
 
   # Associations
   belongs_to :imageable, :polymorphic => true
-  
-  mount_uploader :image, ImageUploader
 
-  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h
-
+  # Callbacks
   after_save :crop_image
 
   def crop_image
@@ -24,8 +23,8 @@ class Image::Base < ActiveRecord::Base
       "thumbnail_url" => image.thumb.url,
       "large_url" => image.large.url,
       "url" => "/admin/images/#{id}",
-      "delete_type" => "DELETE" 
+      "delete_type" => "DELETE"
     }
   end
-  
+
 end

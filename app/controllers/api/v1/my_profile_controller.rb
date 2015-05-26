@@ -1,17 +1,9 @@
 module Api
   module V1
     class MyProfileController < Api::V1::BaseController
-
       def my_profile
         proc_code = Proc.new do
-
-          if @current_user
-            @data = @current_user
-          else
-            @success = false
-            @alert = I18n.translate("response.authentication_error")
-            raise AuthenticationError
-          end
+          @data = @current_user
         end
         render_json_response(proc_code)
       end
@@ -50,7 +42,6 @@ module Api
       def user_params
         params.require(:user).permit(:name, :username, :phone, :skype, :linkedin, :city, :state, :country, :biography, :designation_overridden, :password, :password_confirmation)
       end
-
     end
   end
 end

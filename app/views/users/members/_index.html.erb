@@ -1,0 +1,9 @@
+<% @users.in_groups_of(4) do |group| %>
+  <% group.compact.each do |user| %>
+    <div id="div_user_<%= user.id %>" class="pull-left" style="width:190px;margin-right:10px;min-height:220px;text-align:center;">
+      <%= render :partial=>"item", :locals=>{:user=>user} if user %>
+    </div>
+  <% end %>
+  <%= clear_tag %>
+<% end %>
+<%= theme_paginate(@users) %>

@@ -1,294 +1,79 @@
-class Admin::UsersController < Admin::BaseController
+module Admin
+  class UsersController < Poodle::AdminController
 
-  before_filter :get_user, :only => [:masquerade]
-  before_filter :require_super_admin, only: [:make_admin, :make_super_admin, :remove_admin, :remove_super_admin]
-
-  # GET /users
-  # GET /users.js
-  # GET /users.json
-  def index
-
-    get_collections
-
-    respond_to do |format|
-      format.html # index.html.erb
-      format.json { render json: @users }
-      format.js {}
-    end
-  end
-
-  # GET /users/1
-  # GET /users/1.js
-  # GET /users/1.json
-  def show
-    ## Creating the user object
-    @user = User.find(params[:id])
-
-    respond_to do |format|
-      format.html { get_collections and render :index }
-      format.json { render json: @user }
-      format.js {}
-    end
-  end
-
-  # GET /users/new
-  # GET /users/new.json
-  def new
-    ## Intitializing the user object
-    @user = User.new
-
-    respond_to do |format|
-      format.html { get_collections and render :index }
-      format.json { render json: @user }
-      format.js {}
-    end
-  end
-
-  # GET /users/1/edit
-  def edit
-    ## Fetching the user object
-    @user = User.find(params[:id])
-
-    respond_to do |format|
-      format.html { get_collections and render :index }
-      format.json { render json: @user }
-      format.js {}
-    end
-  end
-
-  # POST /users
-  # POST /users.js
-  # POST /users.json
-  def create
-    ## Creating the user object
-    @user = User.new(user_params)
-    @user.password = ConfigCenter::Defaults::PASSWORD
-    @user.password_confirmation = ConfigCenter::Defaults::PASSWORD
-    ## Validating the data
-    @user.valid?
-
-    respond_to do |format|
-      if @user.errors.blank?
-
-        # Saving the user object
-        @user.save
-
-        # Setting the flash message
-        message = translate("forms.created_successfully", :item => "User")
-        store_flash_message(message, :success)
-
-        format.html {
-          redirect_to user_dashboard_url, notice: message
-        }
-        format.json { render json: @user, status: :created, location: @user }
-        format.js {}
-      else
-
-        # Setting the flash message
-        message = @user.errors.full_messages.to_sentence
-        store_flash_message(message, :alert)
-
-        format.html { render action: "new" }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-        format.js {}
-      end
-    end
-  end
-
-  # PUT /users/1
-  # PUT /users/1.js
-  # PUT /users/1.json
-  def update
-    ## Fetching the user
-    @user = User.find(params[:id])
-
-    ## Updating the @user object with params
-    @user.assign_attributes(user_params)
-
-    ## Validating the data
-    @user.valid?
-    respond_to do |format|
-      if @user.errors.blank?
-
-        # Saving the user object
-        @user.save
-
-        # Setting the flash message
-        message = translate("forms.updated_successfully", :item => "User")
-        store_flash_message(message, :success)
-
-        format.html {
-          redirect_to user_dashboard_url, notice: message
-        }
-        format.json { head :no_content }
-        format.js {}
-
-      else
-
-        # Setting the flash message
-        message = @user.errors.full_messages.to_sentence
-        store_flash_message(message, :alert)
-
-        format.html {
-          render action: "edit"
-        }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-        format.js {}
-
-      end
-    end
-  end
-
-  def update_status
-     ## Fetching the user
-     @user = User.find(params[:user_id])
-
-    ## Updating the @user object with status
-    @user.status = params[:status]
-
-    ## Validating the data
-    @user.valid?
-
-    respond_to do |format|
-      if @user.errors.blank?
-
-        # Saving the user object
-        @user.save
-        # Setting the flash message
-        message = translate("forms.updated_successfully", :item => "Status")
-        store_flash_message(message, :success)
-
-        format.html {
-
-        }
-        format.json { head :no_content }
-        format.js {render :update_status}
-
-      else
-
-        # Setting the flash message
-        message = @user.errors.full_messages.to_sentence
-        store_flash_message(message, :alert)
-
-        format.html {
-          render action: "edit"
-        }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-        format.js {}
-
-      end
-    end
-  end
-
-  # DELETE /users/1
-  # DELETE /users/1.js
-  # DELETE /users/1.json
-  def destroy
-    ## Fetching the user
-    @user = User.find(params[:id])
-
-    respond_to do |format|
-      ## Destroying the user
-      @user.destroy
+    def create
       @user = User.new
-
-      # Fetch the users to refresh ths list and details box
-      get_collections
-      @user = @users.first if @users and @users.any?
-
-      # Setting the flash message
-      message = translate("forms.destroyed_successfully", :item => "User")
-      store_flash_message(message, :success)
-
-      format.html {
-        redirect_to user_dashboard_url notice: message
-      }
-      format.json { head :no_content }
-      format.js {}
-
-    end
-  end
-
-  def masquerade
-    if ["development", "it", "test"].include?(Rails.env)
-      message = translate("users.masquerade", user: @users_masq.name)
-      session[:last_user_id] = current_user.id
-      session[:id] = @users_masq.id
-      redirect_to user_dashboard_path
-    end
-  end
-
-  def make_admin
-    @user = User.find(params[:user_id])
-    @user.user_type="admin"
-    @user.save
-    redirect_to admin_users_url
-  end
-
-  def make_super_admin
-    @user = User.find(params[:user_id])
-    @user.user_type="super_admin"
-    @user.save
-    redirect_to admin_users_url
-  end
-
-  def remove_admin
-    @user = User.find(params[:user_id])
-    @user.user_type="user"
-    @user.save
-    redirect_to admin_users_url
-  end
-
-  def remove_super_admin
-    @user = User.find(params[:user_id])
-    @user.user_type="admin"
-    @user.save
-    redirect_to admin_users_url
-  end
-
-
-  private
-
-  def set_navs
-    set_nav("admin/users")
-  end
-
-  def get_collections
-    # Fetching the users
-    relation = User.where("")
-    @filters = {}
-    if params[:query]
-      @query = params[:query].strip
-      relation = relation.search(@query) if !@query.blank?
+      @user.assign_attributes(permitted_params)
+      @user.assign_default_password_if_nil
+      save_resource(@user)
     end
 
-    if params[:status]
-      @status = params[:status].strip
-      relation = relation.status(@status) if !@status.blank?
+    def make_admin
+      change_role("admin")
     end
 
-    if params[:user_type]
-      @user_type = params[:user_type].strip
-      relation = relation.user_type(@user_type) if !@user_type.blank?
+    def make_super_admin
+      change_role("super_admin")
     end
 
-    @per_page = params[:per_page] || "20"
-    @users = relation.order("name asc").page(@current_page).per(@per_page)
+    def remove_admin
+      change_role("user")
+    end
 
-    ## Initializing the @user object so that we can render the show partial
-    @user = @users.first unless @user
+    def remove_super_admin
+      change_role("admin")
+    end
 
-    return true
+    def update_status
+      @user = User.find(params[:id])
+      @user.update_attribute(:status, params[:status])
+      render_show
+    end
+
+    def masquerade
+      @user = User.find(params[:id])
+      masquerade_as_user(@user)
+    end
+
+    private
+
+    def get_collections
+      # Fetching the users
+      relation = User.where("")
+      @filters = {}
+      if params[:query]
+        @query = params[:query].strip
+        relation = relation.search(@query) if !@query.blank?
+      end
+
+      if params[:status]
+        @status = params[:status].strip
+        relation = relation.status(@status) if !@status.blank?
+      end
+
+      if params[:user_type]
+        @user_type = params[:user_type].strip
+        relation = relation.user_type(@user_type) if !@user_type.blank?
+      end
+
+      @per_page = params[:per_page] || "20"
+      @users = relation.order("created_at desc").page(@current_page).per(@per_page)
+
+      ## Initializing the @user object so that we can render the show partial
+      @user = @users.first unless @user
+
+      return true
+    end
+
+    def change_role(new_role)
+      @user = User.find(params[:id])
+      @user.update_attribute(:user_type, new_role)
+      render_show
+    end
+
+    def permitted_params
+      params[:user].permit(:name, :username, :email, :phone, :designation_overridden, :linkedin, :skype, :department_id, :designation_id)
+    end
 
   end
-
-  def get_user
-    @users_masq = User.find(params[:id]) if params[:id]
-    @users_masq = User.find(params[:user_id]) if params[:user_id]
-  end
-
-  def user_params
-    params.require(:user).permit(:name, :username, :email, :phone, :designation_overridden, :linkedin, :skype, :department_id, :designation_id)
-  end
-
 end

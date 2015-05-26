@@ -1,15 +1,16 @@
-<%# describes about each user %>
 <% user_color = user.user_type.blank? ? "info" : (user.is_super_admin? ? "danger" : "warning") %>
-<div class="web-stats <%= user_color %> clearfix" style="margin-bottom:5px;padding:5px;height:55px;overflow:hidden;">
 
-   	<div class="visible-md visible-lg pull-left mr-10" style="width:20%;max-height:50px;overflow:hidden;">
-      <%= display_profile_picture(user,42,42) %>
-   	</div>
-   	<div class="pull-left" style="width:75%;">
-   		<%= link_to scrap_word(user.display_name, 24), admin_user_path(user), :remote=>true, :class=>"text-color-blue fs-16" %>
-		  <div class="text-color-gray fs-12"><%= user.display_designation %></div>
-    </div>
+<div class="panel panel-default media p-5 <%= user_color %>">
+  <a class="media-left" href="#" style="width:25%;">
+  <%= display_user_image(user, "profile_picture.image.thumb.url", width: "60px", popover: user.designation_overridden) %>
+  </a>
+  <div class="media-body">
+    <%= theme_item_title(user.name, admin_user_path(user)) %>
+    <%= theme_item_sub_title(user.display_designation) %>
+    <%= theme_item_description(user.display_address) %>
+  </div>
 
 </div>
+
 
 

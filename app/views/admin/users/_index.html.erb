@@ -1,22 +1,9 @@
-
-<%# Displays list of @users %>
-<div id="div_user_collections">
-	<% @users.each do |user| %>
-		<div id="div_user_<%= user.id %>" class="pull-left" style="width:49%;margin-right:1%;">
-			<%= render :partial=>"item", :locals=>{:user=>user} %>
-		</div>
-	<% end %>
-	<% if @users.blank? %>
-		<div id="div_user_empty" class="box text-color-grey p-80 text-align-center" style="height:200px;">
-      <%= translate("forms.no_results_found") %>
-		</div>
-	<% end %>
-</div>
-<div class="cl"></div>
-
-<% if @users.any? %>
-   <%= content_tag :div, :class=>"pull-right" do %>
-     <%= paginate @users, :remote => true %>
-   <% end %>
+<% @users.each do |user| %>
+  <div id="div_user_<%= user.id %>">
+    <%= render :partial=>"item", :locals=>{:user=>user} %>
+  </div>
 <% end %>
-<div class="cl"></div>
+
+<%= theme_panel_message(I18n.translate("forms.no_results")) if @users.blank? %>
+
+<%= theme_paginate(@users) %>

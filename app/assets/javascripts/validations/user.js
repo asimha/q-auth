@@ -22,9 +22,9 @@ function validateUserForm() {
       errorElement: "span",
       errorClass: "help-block",
       messages: {
-        "user[first_name]": "Please specify First Name",
-        "user[last_name]": "Please specify Last Name",
-        "user[username]": "Please specify Username",
+        "user[first_name]": "can't be blank",
+        "user[last_name]": "can't be blank",
+        "user[username]": "can't be blank",
         "user[email]": {
             required: "We need your email address to contact you",
             email: "Your email address must be in the format of name@domain.com"
@@ -47,11 +47,8 @@ function validateUserForm() {
             : 'You missed ' + errors + ' fields. They have been highlighted';
 
           // Removing the form error if it already exists
-          $("#div_user_js_validation_error").remove();
-
-          errorHtml = "<div id='div_user_js_validation_error' class=\"alert alert-danger\" data-alert=\"alert\" style=\"margin-bottom:5px;\">"+ errorMessage +"</div>"
-          //$("#div_user_details").prepend(errorHtml);
-          $("#div_modal_generic div.modal-body-main").prepend(errorHtml);
+          var errorHtml = "<div class=\"alert alert-danger\" data-alert=\"alert\" style=\"margin-bottom:5px;\">"+ errorMessage +"</div>"
+          $("#user_form_error").html(errorHtml);
 
           // Show error labels
           $("div.error").show();
@@ -59,8 +56,9 @@ function validateUserForm() {
         } else {
           // Hide error labels
           $("div.error").hide();
+
           // Removing the error message
-          $("#div_user_js_validation_error").remove();
+          $("#user_form_error").remove();
         }
       }
 

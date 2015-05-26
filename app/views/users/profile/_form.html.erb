@@ -1,0 +1,45 @@
+<div class="row">
+	<div class="col-md-3">
+		<%= edit_image(@user, "profile_picture.image.large.url", upload_image_link(@user, :profile_picture, :users)) %>
+  </div>
+
+  <div class="col-md-9">
+    <%= form_for( @user, :url => users_update_path, :remote=> true, :html => {:id => "update_user_detail", :method => :put, :class => "form-horizontal"} ) do |f| %>
+
+      <div id="profile_form_error">
+        <%= @user.errors[:base].to_sentence %>
+      </div>
+
+      <div class="form-inputs mb-30 mt-30">
+        <%= theme_form_field(@user, 'name') %>
+        <%= theme_form_field(@user, 'email') %>
+        <%= theme_form_field(@user, 'username') %>
+        <%= theme_form_field(@user, 'phone', required: false) %>
+        <%= theme_form_field(@user, 'skype', required: false) %>
+        <%= theme_form_field(@user, 'linkedin', required: false) %>
+        <%= theme_form_field(@user, 'city', required: false) %>
+        <%= theme_form_field(@user, 'state', required: false) %>
+        <%= theme_form_field(@user, 'country', required: false) %>
+        <%= theme_form_field(@user, 'password', required: false, html_options: {type: 'password'}) %>
+        <%= theme_form_field(@user, 'password_confirmation', required: false, html_options: {type: 'password'}) %>
+
+        <% options = {assoc_collection: Designation.select("id, title").order("title ASC").all, required: true, editable: true, assoc_display_method: :title} %>
+        <%= theme_form_assoc_group(@user, :designation_id, **options) %>
+
+        <%= theme_form_field(@user, :designation_overridden, required: false) %>
+
+        <% options = {assoc_collection: Department.select("id, name").order("name ASC").all, required: false, editable: true} %>
+        <%= theme_form_assoc_group(@user, :department_id, **options) %>
+
+      </div>
+
+      <div class="pull-right">
+        <%= link_to "Cancel", users_profile_path, class: "btn btn-default", remote: true %>
+        <%= theme_form_button(@user) %>
+      </div>
+
+    <% end %>
+  </div>
+</div>
+
+

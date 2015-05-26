@@ -5,27 +5,21 @@
 // or vendor/assets/javascripts of plugins, if any, can be referenced here using a relative path.
 //
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
-// the compiled file.
+// compiled file.
 //
-// WARNING: THE FIRST BLANK LINE MARKS THE END OF WHAT'S TO BE PROCESSED, ANY BLANK LINE SHOULD
-// GO AFTER THE REQUIRES BELOW.
+// Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
+// about supported directives.
 //
 //= require jquery
 //= require jquery_ujs
+//= require poodle/bootstrap
+//= require poodle/cropper
+//= require poodle/utilities
 //
-//= require humdrum/bootstrap.min
-//= require humdrum/utilities
-//= require theme/jquery/jquery.gritter
-//= require humdrum/photo_upload_helpers
-//= require jquery-fileupload/basic
-//= require jquery-fileupload/vendor/tmpl
-//= require cropper
-//= require dev_scripts
-// 
 // For jQery validations - http://jqueryvalidation.org/documentation/
 //= require jquery.validate
 //= require jquery.validate.additional-methods
-// 
+//= require utility
+//
 // include validation init functions
 //= require_tree ./validations
-

@@ -18,6 +18,7 @@ RSpec.describe Api::V1::MyProfileController, :type => :controller do
                                             department: department,
                                             linkedin: "mohandas_linkedin",
                                             biography: "Father of the nation, India") }
+
   let!(:token) { ActionController::HttpAuthentication::Token.encode_credentials(active_user.auth_token) }
 
   describe "my_profile" do
@@ -53,29 +54,28 @@ RSpec.describe Api::V1::MyProfileController, :type => :controller do
 
     describe "Negative Case" do
       it "should return the error the for no auth token" do
-        active_user
-
         get "my_profile", :format =>:json
         response_body = JSON.parse(response.body)
+
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
 
       it "should return the error the for a invalid auth token" do
-        active_user
-        request.env['HTTP_AUTHORIZATION'] = "invalid token"
+        token = ActionController::HttpAuthentication::Token.encode_credentials("invalid token")
+        request.env['HTTP_AUTHORIZATION'] = token
 
         get "my_profile", :format =>:json
         response_body = JSON.parse(response.body)
 
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
     end
   end
@@ -142,9 +142,9 @@ RSpec.describe Api::V1::MyProfileController, :type => :controller do
         response_body = JSON.parse(response.body)
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
 
       it "should return error for invalid token" do
@@ -156,9 +156,9 @@ RSpec.describe Api::V1::MyProfileController, :type => :controller do
         response_body = JSON.parse(response.body)
         expect(response.status).to  eq(200)
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
 
       it "should return error for invalid name" do
@@ -177,7 +177,7 @@ RSpec.describe Api::V1::MyProfileController, :type => :controller do
         expect(response_body["alert"]).to eq("Sorry, there are errors with the information you provided. Please review the data you have entered.")
         expect(response_body["data"]["errors"]["name"]).to  eq("ValidationError")
         expect(response_body["data"]["errors"]["description"]).to  eq("Sorry, there are errors with the information you provided. Please review the data you have entered.")
-        expect(response_body["data"]["errors"]["details"]).to  eq({"name"=>["can't be blank", "is too short (minimum is 2 characters)"]})
+        expect(response_body["data"]["errors"]["details"]).to  eq({"name"=>["can't be blank", "is too short (minimum is 3 characters)"]})
       end
 
       it "should return error for invalid password" do
@@ -219,7 +219,6 @@ RSpec.describe Api::V1::MyProfileController, :type => :controller do
         expect(response_body["data"]["errors"]["details"]["password"]).to  eq(["is invalid"])
         expect(response_body["data"]["errors"]["details"]["password_confirmation"]).to  eq(["doesn't match Password"])
       end
-
     end
   end
 

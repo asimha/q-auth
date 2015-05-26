@@ -14,5 +14,4 @@ describe Api::V1::MyProfileController, :type => :controller do
       :action => "update"
     )
   end
-
 end

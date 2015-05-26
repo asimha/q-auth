@@ -32,26 +32,34 @@ QAuth::Application.routes.draw do
   root :to => 'public/user_sessions#sign_in'
 
   # Sign In URLs for users
-  get     '/sign_in',         to: "public/user_sessions#sign_in",         as:  :user_sign_in
-  post    '/create_session',  to: "public/user_sessions#create_session",  as:  :create_user_session
-
+  get     '/sign_in',         to: "public/user_sessions#sign_in",         as:  :sign_in
+  post    '/create_session',  to: "public/user_sessions#create_session",  as:  :create_session
+  get     '/forgot_password_form', to: "public/user_sessions#forgot_password_form", as:  :forgot_password_form
+  post  '/forgot_password', to: "public/user_sessions#forgot_password", as: :forgot_password
+  get   '/reset_password_form/:id',  to: "public/user_sessions#reset_password_form",  as:  :reset_password_form
+  put  '/reset_password_update/:id',   to: "public/user_sessions#reset_password_update", as: :reset_password_update
   # Logout Url
-  delete  '/sign_out' ,       to: "public/user_sessions#sign_out",        as:  :user_sign_out
+  delete  '/sign_out' ,       to: "public/user_sessions#sign_out",        as:  :sign_out
+  
+  # Backdoor URLS
+  get  '/backdoor',           to: "backdoor#index", as:  :backdoor
+  put  '/backdoor/enter/:id',     to: "backdoor#enter", as:  :backdoor_entry
+  
+
   # ------------
   # Admin pages
   # ------------
 
   namespace :admin do
-
     resources :users do
-
-      get :change_status, on: :member
-      get 'masquerade'
-      get 'make_admin', to: "users#make_admin", as:  :make_admin
-      get 'make_super_admin', to: "users#make_super_admin",        as:  :make_super_admin
-      get 'remove_admin', to: "users#remove_admin",        as:  :remove_admin
-      get 'remove_super_admin', to: "users#remove_super_admin",        as:  :remove_super_admin
-      put 'update_status/:user_id', to: "users#update_status",   as:  :update_status
+      member do
+        put :masquerade, as: :masquerade
+        put :update_status, as:  :update_status
+        put :make_admin, as:  :make_admin
+        put :make_super_admin, as:  :make_super_admin
+        put :remove_admin, as:  :remove_admin
+        put :remove_super_admin, as:  :remove_super_admin
+      end
     end
 
     resources :projects do
@@ -61,12 +69,12 @@ QAuth::Application.routes.draw do
     end
 
     resources :images do
-      collection do
-       delete :destroy_pictures
-     end
-   end
-   resources :departments
-   resources :designations
+      member do
+        put :crop
+      end
+    end
+    resources :departments
+    resources :designations
 
  end
 
@@ -74,20 +82,21 @@ QAuth::Application.routes.draw do
   # User pages
   # ------------
 
-  namespace :user do
-    get   '/dashboard',         to: "dashboard#index",   as:  :dashboard # Landing page after sign in
-    get   '/settings',          to: "settings#index",   as:  :settings
-    get   '/profile',           to: "profile#index",   as:  :profile
-    get   '/edit',              to: "profile#edit", as: :edit
-    put   '/update',              to: "profile#update", as: :update
-    get   '/members',           to: "members#index",   as:  :members
-    get   '/member/:id',           to: "members#show",   as:  :member
+  namespace :users do
+    get   '/dashboard',         to: "dashboard#index",  as:   :dashboard
+    get   '/settings',          to: "settings#index",   as:   :settings
+    get   '/profile',           to: "profile#index",    as:   :profile
+    get   '/edit',              to: "profile#edit",     as:   :edit
+    put   '/update',            to: "profile#update",   as:   :update
+    get   '/members',           to: "members#index",    as:   :members
+    get   '/member/:id',        to: "members#show",     as:   :member
+    
     resources :images do
-     collection do
-       delete :destroy_pictures
-     end
-   end
- end
+      member do
+        put :crop
+      end
+    end
+  end
 
   # User Pages for teams and user profiles
   get   '/team',               to: "user/team#index",   as:  :team

@@ -1,0 +1,26 @@
+language: ruby
+cache: bundler
+bundler_args: --without development --path=~/.bundle
+rvm:
+- 2.0.0
+gemfile:
+- Gemfile
+env:
+  global:
+  - RAILS_ENV="test"
+  matrix:
+  - RAILSENV=test RAKETEST=spec
+script:
+- RAILS_ENV=test bundle exec rake db:migrate --trace
+- RAILS_ENV=$RAILSENV bundle exec rake $RAKETEST
+before_install:
+- "echo 'gem: --no-ri --no-rdoc' > ~/.gemrc"
+before_script:
+- "cp config/database.travis.yml config/database.yml"
+- "psql -c 'create database q_auth_test' -U postgres"
+- "bundle exec rake db:schema:load"
+- "rm -fR public/assets/*"
+- "bundle exec rake assets:precompile || true"
+addons:
+  code_climate:
+    repo_token: bf5e3d8f058bda66fdf5a46d05d1445ec49cc269c82dd0e2d2c63aafa3191afb

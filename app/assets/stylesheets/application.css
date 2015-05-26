@@ -8,17 +8,21 @@
  * You're free to add application-wide styles to this file and they'll appear at the top of the
  * compiled file, but it's generally better to create a new file per style scope.
  *
+ *= require poodle/bootstrap
+ *= require poodle/bootstrap-theme
+ *= require poodle/font-awesome
+ *= require poodle/poodle-theme
+ *= require poodle/cropper
+ *= require handycss.css
  *= require_self
 
- *= require handycss.css
- *= require handycss.box.css
-
- *= require common/form.css
- *= require cropper.css
-
- *= require ux-libraries/humdrum/bootstrap
- *= require ux-libraries/humdrum/overrides-bootstrap
-
- *= require ux-libraries/font-awesome
  */
 
+img.centered {
+  display: block;
+  margin-left: auto;
+  margin-right: auto
+}
+.footer-with-sidebar {
+	position: relative;
+}

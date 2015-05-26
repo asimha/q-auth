@@ -1,4 +1,3 @@
 // Fill the right box with user details
-$('#div_user_details').html("<%= escape_javascript(render(:partial=>'show')) %>");
-
-reset_panels();
+$('#div_user_show').html("<%= escape_javascript(render(:partial=>'show')) %>");
+$('#div_user_details').html("<%= escape_javascript(render(:partial=>'details')) %>");

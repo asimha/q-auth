@@ -1,131 +1,46 @@
-
-<%# Renders a partial which is used to create a new user %>
-
 <%= form_for([:admin, @user], :html => {:id=>"form_user", :class=>"mb-0 form-horizontal", :role => "form", :method => (@user.new_record? ? :post : :put), :remote=>true}) do |f| %>
 
-  <div class="modal-body">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <%= params[:action].titleize %> User
+    </div>
+    <div class="panel-body" style="height:auto;">
 
-    <%= @user.errors[:base].to_sentence %>
-
-    <%= hidden_field_tag :faction, @user.new_record? ? admin_users_path : admin_users_path(@user) %>
-    <%= hidden_field_tag :fmethod, @user.new_record? ? "POST" : "PUT" %>
-
-    <div class="form-inputs">
-
-
-      <!-- Name (string) -->
-      <%= render :partial=>"layouts/common/field", :locals=>{:object=>@user,
-                                              :object_name=>'user',
-                                              :field_name=>'name',
-                                              :display_name=>'Name',
-                                              :field_type=>'string',
-                                              :input_type=>'text',
-                                              :required=>true,
-                                              :place_holder=>"e.g: Black."} %>
-
-      <!-- Username (string) -->
-      <%= render :partial=>"layouts/common/field", :locals=>{:object=>@user,
-                                              :object_name=>'user',
-                                              :field_name=>'username',
-                                              :display_name=>'Username',
-                                              :field_type=>'string',
-                                              :input_type=>'text',
-                                              :required=>true,
-                                              :place_holder=>"e.g: joe.black."} %>
-
-      <!-- Email (string) -->
-      <%= render :partial=>"layouts/common/field", :locals=>{:object=>@user,
-                                              :object_name=>'user',
-                                              :field_name=>'email',
-                                              :display_name=>'Email',
-                                              :field_type=>'string',
-                                              :input_type=>'email',
-                                              :required=>true,
-                                              :place_holder=>"e.g: jblack@qwinixtech.com"} %>
-
-      <!-- Choose Designation - Drop Down -->
-      <div class="form-group ">
-        <label for="inp_name" class="col-md-4 control-label">Designation
-        </label>
-        <div class="col-md-8">
-          <% if @designation %>
-            <%= @designation.title %>
-            <%= hidden_field_tag "user[designation_id]", @designation.id %>
-          <% else %>
-            <%= collection_select(:user, :designation_id, Designation.select("id, title").order("title ASC").all, :id, :title, {:prompt=>true}, {:class => 'form-control'}) %>
-          <% end %>
-        </div>
+      <div id="user_form_error">
+        <%= @user.errors[:base].to_sentence %>
       </div>
 
-      <!-- Choose Department - Drop Down -->
-      <div class="form-group ">
-        <label for="inp_name" class="col-md-4 control-label">Department
-          <span class="text-color-red ml-10 mr-5 pull-right">*</span>
-        </label>
-        <div class="col-md-8">
-          <% if @department %>
-            <%= @department.name %>
-            <%= hidden_field_tag "user[department_id]", @department.id %>
-          <% else %>
-            <%= collection_select(:user, :department_id, Department.select("id, name").order("name ASC").all, :id, :name, {:prompt=>true}, {:class => 'form-control'}) %>
-          <% end %>
-        </div>
+      <div class="form-inputs mb-30 mt-30">
+
+        <%= theme_form_field(@user, :name) %>
+        <%= theme_form_field(@user, :username) %>
+        <%= theme_form_field(@user, :email) %>
+
+        <% options = {assoc_collection: Designation.select("id, title").order("title ASC").all, required: true, editable: true, assoc_display_method: :title} %>
+        <%= theme_form_assoc_group(@user, :designation_id, **options) %>
+
+        <%= theme_form_field(@user, :designation_overridden, required: false) %>
+
+        <% options = {assoc_collection: Department.select("id, name").order("name ASC").all, required: false, editable: true} %>
+        <%= theme_form_assoc_group(@user, :department_id, **options) %>
+
+        <%= theme_form_field(@user, :phone, required: false) %>
+        <%= theme_form_field(@user, :linkedin, required: false) %>
+        <%= theme_form_field(@user, :skype, required: false) %>
+
       </div>
-
-      <!-- Designation (string) -->
-      <%= render :partial=>"layouts/common/field", :locals=>{:object=>@user,
-                                              :object_name=>'user',
-                                              :field_name=>'designation_overridden',
-                                              :display_name=>'Designation',
-                                              :field_type=>'string',
-                                              :input_type=>'text',
-                                              :required=>true,
-                                              :place_holder=>"Custom Designation"} %>
-
-      <!-- Phone (string) -->
-      <%= render :partial=>"layouts/common/field", :locals=>{:object=>@user,
-                                              :object_name=>'user',
-                                              :field_name=>'phone',
-                                              :display_name=>'Phone',
-                                              :field_type=>'string',
-                                              :input_type=>'tel',
-                                              :required=>false,
-                                              :place_holder=>"e.g: +91-9880-181-181."} %>
-
-      <!-- Linked In (string) -->
-      <%= render :partial=>"layouts/common/field", :locals=>{:object=>@user,
-                                              :object_name=>'user',
-                                              :field_name=>'linkedin',
-                                              :display_name=>'Linked In',
-                                              :field_type=>'string',
-                                              :input_type=>'text',
-                                              :required=>false,
-                                              :place_holder=>"Copy paste linked in url here."} %>
-      <!-- Skype (string) -->
-      <%= render :partial=>"layouts/common/field", :locals=>{:object=>@user,
-                                              :object_name=>'user',
-                                              :field_name=>'skype',
-                                              :display_name=>'Skype',
-                                              :field_type=>'string',
-                                              :input_type=>'text',
-                                              :required=>false,
-                                              :place_holder=>"Enter skype username"} %>
 
     </div>
 
-  </div>
-
-  <div class="modal-footer">
-
-    <div class="pull-right">
-      <% button_text = "#{@user.new_record? ? "Create" : "Update"} Item" %>
-      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-      <%= submit_tag button_text, "data-reset-text"=>button_text, "data-loading-text"=>"Saving ...", :class=>"btn btn-primary ml-10" %>
+    <div class="panel-footer clearfix">
+      <div class="pull-right">
+        <% show_url = @user.new_record? ? admin_users_path : admin_user_path(@user) %>
+        <%= link_to "Cancel", show_url, class: "btn btn-default", remote: true %>
+        <%= theme_form_button(@user) %>
+      </div>
     </div>
 
   </div>
-
-	<div class="cl-10"></div>
 
 <% end %>
 

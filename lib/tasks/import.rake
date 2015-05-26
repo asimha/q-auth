@@ -25,18 +25,7 @@ namespace 'import' do
       department.name = row[:name]
       department.description = row[:description]
 
-      # Adding a client picture
-      picture = nil
-      image_name = row[:image_name]
-      unless image_name.strip.blank?
-        image_path = "db/import_data/#{RAILS_ENV}/images/departments/#{image_name}"
-        if File.exists?(image_path)
-          picture = department.build_picture
-          picture.image = File.open(image_path)
-        end
-      end
-
-      if department.valid? && (picture.blank? || picture.valid?)
+      if department.valid?
         puts "#{department.name} saved".green if department.save!
       else
         puts "Error! #{department.errors.full_messages.to_sentence}".red
@@ -66,18 +55,7 @@ namespace 'import' do
       designation.title = row[:title]
       designation.responsibilities = row[:responsibilities]
 
-      # Adding a client picture
-      picture = nil
-      image_name = row[:image_name]
-      unless image_name.strip.blank?
-        image_path = "db/import_data/#{RAILS_ENV}/images/designations/#{image_name}"
-        if File.exists?(image_path)
-          picture = designation.build_picture
-          picture.image = File.open(image_path)
-        end
-      end
-
-      if designation.valid? && (picture.blank? || picture.valid?)
+      if designation.valid?
         puts "#{designation.title} saved".green if designation.save!
       else
         puts "Error! #{designation.errors.full_messages.to_sentence}".red
@@ -107,6 +85,7 @@ namespace 'import' do
       user = User.find_by_username(row[:username]) || User.new
       user.name = row[:name]
       user.username = row[:username]
+      user.designation_overridden = row[:designation]
       user.email = row[:email]
       user.phone = row[:phone]
       user.skype = row[:skype]

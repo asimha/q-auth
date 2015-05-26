@@ -45,7 +45,7 @@ QAuth::Application.configure do
   # config.force_ssl = true
 
   # Set to :debug to see everything in the log.
-  config.log_level = :info
+  config.log_level = :debug
 
   # Prepend all log lines with the following tags.
   # config.log_tags = [ :subdomain, :uuid ]
@@ -79,4 +79,21 @@ QAuth::Application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+
+  config.active_record.dump_schema_after_migration = false
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.asset_host = 'http://q-auth.qwinixtech.com/'
+  config.action_mailer.default_url_options = { :host => 'q-auth.qwinixtech.com' }
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default :charset => "utf-8"
+  config.action_mailer.smtp_settings = {
+    :enable_starttls_auto => true,
+    :address => "smtp.sendgrid.net",
+    :port => 587,
+    :domain => "sendgrid.com",
+    :authentication => :login,
+    :user_name =>ENV['SENDGRID_USERNAME'],
+    :password => ENV['SENDGRID_PASSWORD']
+  }
 end

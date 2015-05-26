@@ -1,5 +1,2 @@
-// Show the edit form in the right box.
-heading = "Edit Department";
-bodyContent = "<%= escape_javascript(render(:partial=>"form")) %>";
-showModal(heading, bodyContent);
+$('#div_department_details').html("<%= escape_javascript(render(:partial=>'form')) %>");
 validateDepartmentForm();

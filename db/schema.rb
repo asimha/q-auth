@@ -17,15 +17,15 @@ ActiveRecord::Schema.define(version: 20141230100508) do
   enable_extension "plpgsql"
 
   create_table "departments", force: true do |t|
-    t.string   "name"
-    t.text     "description"
+    t.string   "name",        limit: 256
+    t.string   "description", limit: 2056
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   create_table "designations", force: true do |t|
-    t.string   "title"
-    t.text     "responsibilities"
+    t.string   "title",            limit: 256
+    t.string   "responsibilities", limit: 2056
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -81,9 +81,9 @@ ActiveRecord::Schema.define(version: 20141230100508) do
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true, using: :btree
 
   create_table "users", force: true do |t|
-    t.string   "name"
+    t.string   "name",                   limit: 256
     t.string   "username",               limit: 32,                       null: false
-    t.string   "email",                                                   null: false
+    t.string   "email",                  limit: 256,                      null: false
     t.text     "biography"
     t.string   "phone",                  limit: 16
     t.string   "status",                             default: "inactive", null: false
@@ -111,7 +111,7 @@ ActiveRecord::Schema.define(version: 20141230100508) do
     t.integer  "failed_attempts",                    default: 0
     t.string   "unlock_token"
     t.datetime "locked_at"
-    t.string   "auth_token"
+    t.string   "auth_token",             limit: 512
     t.string   "user_type",                          default: "user"
     t.datetime "created_at"
     t.datetime "updated_at"

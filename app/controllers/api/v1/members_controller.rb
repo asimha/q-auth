@@ -2,8 +2,7 @@ module Api
   module V1
     class MembersController < Api::V1::BaseController
 
-      skip_before_filter :require_auth_token
-      before_filter :require_admin_auth_token, :parse_pagination_params
+      before_filter :parse_pagination_params
 
       def show
         proc_code = Proc.new do

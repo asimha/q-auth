@@ -1,0 +1,9 @@
+---
+applications:
+- name: q-auth
+  memory: 256M
+  instances: 1
+  path: .
+  command: bundle exec rake db:migrate && bundle exec rails s -p $PORT
+  services:
+    - q-auth-postgres

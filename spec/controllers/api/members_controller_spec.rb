@@ -46,25 +46,23 @@ RSpec.describe Api::V1::MembersController, :type => :controller do
         response_body = JSON.parse(response.body)
 
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
 
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
 
       end
       it "should not return the list of users for ram" do
         users = [ram, sita, lakshman, admin, super_admin]
-        token = ActionController::HttpAuthentication::Token.encode_credentials(ram.auth_token)
-        request.env['HTTP_AUTHORIZATION'] = token
 
         get "index", :format =>:json
         response_body = JSON.parse(response.body)
 
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
 
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
     end
   end
@@ -109,10 +107,10 @@ RSpec.describe Api::V1::MembersController, :type => :controller do
         response_body = JSON.parse(response.body)
 
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
 
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
       it "should not return the list of users for sita" do
         ram
@@ -122,10 +120,10 @@ RSpec.describe Api::V1::MembersController, :type => :controller do
         response_body = JSON.parse(response.body)
 
         expect(response_body["success"]).to  eq(false)
-        expect(response_body["alert"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["alert"]).to  eq("Permission Denied: You don't have permission to perform this action")
 
         expect(response_body["data"]["errors"]["name"]).to  eq("AuthenticationError")
-        expect(response_body["data"]["errors"]["description"]).to  eq("403 Permission Denied! You don't have permission to perform this action.")
+        expect(response_body["data"]["errors"]["description"]).to  eq("Permission Denied: You don't have permission to perform this action")
       end
     end
   end

@@ -8,7 +8,6 @@ describe Api::V1::DepartmentsController, :type => :controller do
     )
   end
 
-
   it "show" do
     expect(:get => "/api/v1/department/:id").to route_to(
       :controller => "api/v1/departments",
@@ -16,5 +15,4 @@ describe Api::V1::DepartmentsController, :type => :controller do
       :id=> ":id"
     )
   end
-
 end
